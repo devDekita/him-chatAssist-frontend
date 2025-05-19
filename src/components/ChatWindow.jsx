@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { sendMessageToBot } from "../services/chatbotServices";
 import "./ChatWindow.css";
 
 const ChatWindow = ({ onClose }) => {
@@ -29,19 +29,16 @@ const ChatWindow = ({ onClose }) => {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/chat", {
-        message: inputText,
-      });
-
+      const data = await sendMessageToBot(inputText);
       const botReply = {
         sender: "bot",
-        html: response.data.reply || "<p>Sorry, I didn't understand that.</p>",
+        html: data.reply || "<p>Sorry, I didn't understand that.</p>",
       };
 
       setTimeout(() => {
         setIsTyping(false);
         setMessages((prev) => [...prev, botReply]);
-      }, 1000); // Simulate typing delay
+      }, 1000); // Simulated typing delay
     } catch (error) {
       setIsTyping(false);
       setMessages((prev) => [
@@ -109,5 +106,3 @@ const ChatWindow = ({ onClose }) => {
 };
 
 export default ChatWindow;
-
-
